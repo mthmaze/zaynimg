@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZaynImg</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.5s;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        #password-screen {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .logo {
+            color: aqua;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            color: #f0f0f0;
+        }
+        
+        .code-input {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .code-input input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            background-color: #2a2a2a;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .code-input input:focus {
+            border-color: aqua;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            outline: none;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        #message {
+            margin-top: 15px;
+            min-height: 20px;
+            color: #ff4444;
+            font-weight: bold;
+        }
+        
+        #slideshow-container {
+            display: none;
+            width: 100%;
+            position: relative;
+        }
+        
+        .slides {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin-bottom: 20px;
+        }
+        
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: black;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .active {
+            display: block;
+            animation: fade 1s;
+        }
+        
+        @keyframes fade {
+            from {opacity: .4}
+            to {opacity: 1}
+        }
+        
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            padding: 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            transition: 0.3s;
+            border-radius: 50%;
+            user-select: none;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .next {
+            right: 10px;
+        }
+        
+        .prev {
+            left: 10px;
+        }
+        
+        .prev:hover, .next:hover {
+            background-color: rgba(0,0,0,0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .dots {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .dot {
+            cursor: pointer;
+            height: 15px;
+            width: 15px;
+            margin: 0 5px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .active-dot, .dot:hover {
+            background-color: aqua;
+            transform: scale(1.2);
+        }
+        
+        .download-all {
+            margin-top: 20px;
+        }
+        
+        .filename-display {
+            margin-top: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            color: aqua;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="password-screen">
+            <div class="logo">ZaynImg</div>
+            <h1>Enter Access Code</h1>
+            <p>Please enter the 4-digit code to view the images</p>
+            
+            <div class="code-input">
+                <input type="text" maxlength="1" id="digit1" oninput="moveToNext(this, 'digit2')">
+                <input type="text" maxlength="1" id="digit2" oninput="moveToNext(this, 'digit3')">
+                <input type="text" maxlength="1" id="digit3" oninput="moveToNext(this, 'digit4')">
+                <input type="text" maxlength="1" id="digit4" oninput="moveToNext(this, null)">
+            </div>
+            
+            <button onclick="checkCode()">Submit</button>
+            <div id="message"></div>
+        </div>
+        
+        <div id="slideshow-container">
+            <div class="logo">ZaynImg</div>
+            <h1>Image Gallery</h1>
+            
+            <div class="slides">
+                <img src="DSC02430.JPG" class="slide active" data-filename="DSC02430.JPG">
+                <img src="DSC02434.JPG" class="slide" data-filename="DSC02434.JPG">
+                <img src="DSC02435.JPG" class="slide" data-filename="DSC02435.JPG">
+                <img src="DSC02442.JPG" class="slide" data-filename="DSC02442.JPG">
+                <img src="DSC02447.JPG" class="slide" data-filename="DSC02447.JPG">
+                <img src="DSC02450.JPG" class="slide" data-filename="DSC02450.JPG">
+                <img src="DSC02460.JPG" class="slide" data-filename="DSC02460.JPG">
+                <img src="DSC02465.JPG" class="slide" data-filename="DSC02465.JPG">
+            </div>
+            
+            <div class="filename-display" id="filename-display">DSC02430.JPG</div>
+            
+            <a class="prev" onclick="changeSlide(-1)">❮</a>
+            <a class="next" onclick="changeSlide(1)">❯</a>
+            
+            <div class="dots">
+                <span class="dot active-dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+                <span class="dot" onclick="currentSlide(4)"></span>
+                <span class="dot" onclick="currentSlide(5)"></span>
+                <span class="dot" onclick="currentSlide(6)"></span>
+                <span class="dot" onclick="currentSlide(7)"></span>
+                <span class="dot" onclick="currentSlide(8)"></span>
+            </div>
+            
+            <div class="download-all">
+                <button onclick="downloadAll()">Download All Images</button>
+                <button onclick="downloadCurrent()">Download Current Image</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password protection
+        function moveToNext(current, nextFieldId) {
+            if (current.value.length === 1) {
+                if (nextFieldId) {
+                    document.getElementById(nextFieldId).focus();
+                }
+            }
+        }
+        
+        function checkCode() {
+            const digit1 = document.getElementById('digit1').value;
+            const digit2 = document.getElementById('digit2').value;
+            const digit3 = document.getElementById('digit3').value;
+            const digit4 = document.getElementById('digit4').value;
+            
+            const enteredCode = digit1 + digit2 + digit3 + digit4;
+            const correctCode = "9308";
+            
+            if (enteredCode === correctCode) {
+                document.getElementById('password-screen').style.display = 'none';
+                document.getElementById('slideshow-container').style.display = 'block';
+                document.body.style.backgroundColor = '#1a1a1a';
+            } else {
+                document.getElementById('message').textContent = 'Incorrect code. Please try again.';
+                // Clear all inputs
+                document.getElementById('digit1').value = '';
+                document.getElementById('digit2').value = '';
+                document.getElementById('digit3').value = '';
+                document.getElementById('digit4').value = '';
+                // Focus back on first input
+                document.getElementById('digit1').focus();
+            }
+        }
+        
+        // Slideshow functionality
+        let slideIndex = 1;
+        showSlide(slideIndex);
+        
+        function changeSlide(n) {
+            showSlide(slideIndex += n);
+        }
+        
+        function currentSlide(n) {
+            showSlide(slideIndex = n);
+        }
+        
+        function showSlide(n) {
+            const slides = document.getElementsByClassName("slide");
+            const dots = document.getElementsByClassName("dot");
+            
+            if (n > slides.length) { slideIndex = 1; }
+            if (n < 1) { slideIndex = slides.length; }
+            
+            // Hide all slides
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].classList.remove("active");
+            }
+            
+            // Remove active class from all dots
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].classList.remove("active-dot");
+            }
+            
+            // Show current slide and activate corresponding dot
+            slides[slideIndex-1].classList.add("active");
+            dots[slideIndex-1].classList.add("active-dot");
+            
+            // Update filename display
+            document.getElementById('filename-display').textContent = slides[slideIndex-1].getAttribute('data-filename');
+        }
+        
+        // Download functions
+        function downloadAll() {
+            const images = [
+                "DSC02430.JPG",
+                "DSC02434.JPG",
+                "DSC02435.JPG",
+                "DSC02442.JPG",
+                "DSC02447.JPG",
+                "DSC02450.JPG",
+                "DSC02460.JPG",
+                "DSC02465.JPG"
+            ];
+            
+            // Create a temporary link for each image and trigger download
+            images.forEach((image, index) => {
+                setTimeout(() => {
+                    const link = document.createElement('a');
+                    link.href = image;
+                    link.download = image;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }, index * 300); // Stagger downloads to avoid issues
+            });
+        }
+        
+        function downloadCurrent() {
+            const currentSlide = document.querySelector('.slide.active');
+            const filename = currentSlide.getAttribute('data-filename');
+            
+            const link = document.createElement('a');
+            link.href = currentSlide.src;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (document.getElementById('slideshow-container').style.display === 'block') {
+                if (event.key === 'ArrowLeft') {
+                    changeSlide(-1);
+                } else if (event.key === 'ArrowRight') {
+                    changeSlide(1);
+                }
+            }
+        });
+        
+        // Focus on first digit input when page loads
+        window.onload = function() {
+            document.getElementById('digit1').focus();
+        };
+    </script>
+</body>
+</html>
